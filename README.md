@@ -1,0 +1,2 @@
+# solotrpg
+A JavaScript project
