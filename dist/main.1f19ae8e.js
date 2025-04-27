@@ -120,6 +120,12 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 })({"main.js":[function(require,module,exports) {
 'use strict';
 
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 var distance = {
   name: 'Distance',
   dice: "1d6",
@@ -128,7 +134,7 @@ var distance = {
     element: 'Close'
   }, {
     number: '2-3',
-    element: 'Near'
+    element: 'Near at #1d3 meter'
   }, {
     number: '4-6',
     element: 'Far'
@@ -142,7 +148,7 @@ var roomType = {
     element: 'Empty'
   }, {
     number: '3',
-    element: 'Trap'
+    element: '{Trap}'
   }, {
     number: '4',
     element: 'Minor hazard'
@@ -166,14 +172,31 @@ var roomType = {
     element: 'Boss monster'
   }]
 };
-var dice = {
-  sides: 6,
-  roll: function roll() {
-    var randomNumber = Math.floor(Math.random() * this.sides) + 1;
-    return randomNumber;
-  }
+var trap = {
+  name: 'Trap',
+  dice: "1d6",
+  entries: [{
+    number: '1',
+    element: 'Pit'
+  }, {
+    number: '2',
+    element: 'Poison dart'
+  }, {
+    number: '3',
+    element: 'Fireball'
+  }, {
+    number: '4',
+    element: 'Gas'
+  }, {
+    number: '5',
+    element: 'Blade'
+  }, {
+    number: '6',
+    element: 'Electricity'
+  }]
 };
-function roll(expression) {
+var tables = [distance, roomType, trap];
+function rollDie(expression) {
   var parts = expression.split('d');
   var numberOfDice = parseInt(parts[0]);
   var sides = parseInt(parts[1]);
@@ -185,38 +208,128 @@ function roll(expression) {
 }
 function rollOnTable(table) {
   var result = "";
-  var randomNumber = roll(table.dice);
-  console.log("randomNumber: " + randomNumber);
+  var randomNumber = rollDie(table.dice);
   for (var i = 0; i < table.entries.length; i++) {
     var entry = table.entries[i];
     if (entry.number.includes("-")) {
       var range = entry.number.split("-");
       var lowEnd = parseInt(range[0]);
-      console.log("lowEnd: " + lowEnd);
       var highEnd = parseInt(range[1]);
-      console.log("highEnd: " + highEnd);
       if (randomNumber >= lowEnd && randomNumber <= highEnd) {
-        console.log("entry.element: " + entry.element);
         result = entry.element;
       }
     } else if (entry.number == randomNumber) {
-      console.log("entry.element: " + entry.element);
       result = entry.element;
     }
   }
   ;
-  var fullResult = "(".concat(randomNumber, ") ").concat(result);
+  var fullResult = "Roll on ".concat(table.name, ": ").concat(result, " (").concat(randomNumber, ") ");
   return fullResult;
 }
-function write(content) {
-  var placeHolder = document.getElementById('placeholder');
-  placeHolder.innerHTML = content;
+function parseDie(expression) {
+  console.log("parseDie: " + expression);
+  var content = [];
+  var openIndex = expression.indexOf("[");
+  var closeIndex = expression.indexOf("]");
+  var before = expression.substring(0, openIndex);
+  var diceExpression = expression.substring(openIndex + 1, closeIndex);
+  var after = expression.substring(closeIndex + 1);
+  content.push(document.createTextNode(before));
+  content.push(document.createTextNode(rollDie(diceExpression)));
+  if (isIterable(after)) {
+    content.push.apply(content, _toConsumableArray(parseExpression(after)));
+  } else {
+    content.push(parseExpression(after));
+  }
+  console.log("content: ".concat(content));
+  return content;
+}
+function isIterable(obj) {
+  console.log("check isIterable: " + obj);
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
+}
+function parseForTable(expression) {
+  console.log("parseForTable: " + expression);
+  var content = [];
+  var openIndex = expression.indexOf("{");
+  var closeIndex = expression.indexOf("}");
+  var before = expression.substring(0, openIndex);
+  var tableName = expression.substring(openIndex + 1, closeIndex);
+  var after = expression.substring(closeIndex + 1);
+  var table = tables.find(function (t) {
+    return t.name === tableName;
+  });
+  var button = null;
+  if (!table) {
+    console.error("Table ".concat(tableName, " not found"));
+  } else {
+    var button = createRollOnTableButton(table);
+  }
+  content.push(document.createTextNode(before));
+  if (button) {
+    content.push(button);
+  }
+  if (isIterable(after)) {
+    content.push.apply(content, _toConsumableArray(parseExpression(after)));
+  } else {
+    content.push(parseExpression(after));
+  }
+  console.log("content: ".concat(content));
+  return content;
+}
+function parseExpression(expression) {
+  for (var i = 0; i < expression.length; i++) {
+    if (expression[i] == "{") {
+      return parseForTable(expression);
+    } else if (expression[i] == "[") {
+      return parseDie(expression);
+    }
+  }
+  console.log("parseExpression: " + expression);
+  return [document.createTextNode(expression)];
+}
+function createRollOnTableButton(table) {
+  var button = document.createElement('button');
+  button.innerHTML = "<button style=\"display: inline-block\">ROLL</button>";
+  button.onclick = function () {
+    createJournalLine(parseExpression(rollOnTable(table)));
+  };
+  return button;
+}
+function createJournalLine(content) {
+  console.log("createJournalLine: " + content);
+  var journal = document.getElementById('journal');
+  var newLine = document.createElement('div');
+  for (var i = 0; i < content.length; i++) {
+    console.log(content[i]);
+    newLine.appendChild(content[i]);
+  }
+  journal.appendChild(newLine);
+}
+function clearJournal() {
+  var journal = document.getElementById('journal');
+  journal.innerHTML = "";
 }
 var button = document.getElementById('button');
+var btnClearJournal = document.getElementById('clearJournal');
 button.onclick = function () {
-  var result = rollOnTable(roomType);
-  console.log("roll result:" + result);
-  write(result);
+  console.log("button clicked");
+  // TEST_parseExpression();
+  // TEST_parseExpressionWithTable()
+  // TEST_createButton();
+
+  // var content = parseExpression("Simple expression with no dice or tables");
+  // var content = parseDie("roll [1d6] times");
+  var content = parseDie("roll on {Trap} and then do something else");
+  // var content = parseExpression("roll [1d6] times on table {Trap} and then do something else");
+  createJournalLine(content);
+};
+btnClearJournal.onclick = function () {
+  console.log("clear journal clicked");
+  clearJournal();
 };
 },{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -243,7 +356,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60602" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61683" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
