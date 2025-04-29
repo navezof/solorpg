@@ -3,7 +3,8 @@
   "env": {
     "browser": true,
     "es6": true,
-    "worker": true
+    "worker": true,
+    "jest/globals": true,
   },
   "parserOptions": {
     "ecmaVersion": 2021,

@@ -216,15 +216,40 @@ Object.defineProperty(exports, "__esModule", {
 exports.rollDie = rollDie;
 exports.rollOnTable = rollOnTable;
 function rollDie(expression) {
+  // expression = "1d6"
+  // expression = "2d10"
+  // expression = "1d6+1"
+  // expression = "1d6 + 1"
+  // expression = "1d6-1"
+  // expression = "1d6 - 1"
+  // expression = "1d6*2"
+  // expression = "1d6 * 2"
+  // expression = "1d6/2"
+  // expression = "1d6 / 2"
+
   var parts = expression.split('d');
   var numberOfDice = parseInt(parts[0], 10);
   var sides = parseInt(parts[1], 10);
+  if (Number.isNaN(sides) || sides <= 0) {
+    throw new Error("Invalid dice sides value: \"".concat(parts[1], "\""));
+  }
   var total = 0;
   for (var i = 0; i < numberOfDice; i += 1) {
     total += Math.floor(Math.random() * sides) + 1;
   }
   return total;
 }
+
+/**
+ * Rolls on a table and returns the result.
+ * @param {Object} table - The table to roll on.
+ * @param {string} table.dice - The dice expression (e.g., "1d6").
+ * @param {Array} table.entries - The entries of the table.
+ * @param {string} table.name - The name of the table.
+ * Each entry in table.entries should have:
+ *   - {string} number: A single number or a range (e.g., "1" or "1-3").
+ *   - {string} element: The result corresponding to the number or range.
+ */
 function rollOnTable(table) {
   var result = '';
   var randomNumber = rollDie(table.dice);
@@ -237,11 +262,11 @@ function rollOnTable(table) {
       if (randomNumber >= lowEnd && randomNumber <= highEnd) {
         result = entry.element;
       }
-    } else if (entry.number === randomNumber) {
+    } else if (parseInt(entry.number, 10) === randomNumber) {
       result = entry.element;
     }
   }
-  var fullResult = "Roll on ".concat(table.name, ": ").concat(result, " (").concat(randomNumber, ") ");
+  var fullResult = "Roll on ".concat(table.name, ": ").concat(result, " (").concat(randomNumber, ")");
   return fullResult;
 }
 },{}],"journal.js":[function(require,module,exports) {
@@ -253,40 +278,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.clearJournal = clearJournal;
 exports.createJournalLine = createJournalLine;
 exports.createRollOnTableButton = createRollOnTableButton;
-var _parser = require("./parser");
-var _roll = require("./roll");
-function createJournalLine(content) {
-  var journal = document.getElementById('journal');
-  var newLine = document.createElement('div');
-  for (var i = 0; i < content.length; i += 1) {
-    newLine.appendChild(content[i]);
-  }
-  journal.appendChild(newLine);
-}
-function createRollOnTableButton(table) {
-  var button = document.createElement('button');
-  button.innerHTML = '<button style="display: inline-block">ROLL</button>';
-  button.onclick = function btnFunction() {
-    createJournalLine((0, _parser.parseExpression)((0, _roll.rollOnTable)(table)));
-  };
-  return button;
-}
-function clearJournal() {
-  var journal = document.getElementById('journal');
-  journal.innerHTML = '';
-}
-},{"./parser":"parser.js","./roll":"roll.js"}],"parser.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.parseDie = parseDie;
 exports.parseExpression = parseExpression;
-exports.parseTable = parseTable;
 var _table = require("./table");
 var _utils = _interopRequireDefault(require("./utils"));
-var _journal = require("./journal");
 var _roll = require("./roll");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
@@ -296,7 +290,6 @@ function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Sym
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function parseTable(expression) {
-  console.log("parseForTable: ".concat(expression));
   var content = [];
   var openIndex = expression.indexOf('{');
   var closeIndex = expression.indexOf('}');
@@ -310,7 +303,7 @@ function parseTable(expression) {
   if (!table) {
     console.error("Table ".concat(tableName, " not found"));
   } else {
-    button = (0, _journal.createRollOnTableButton)(table);
+    button = createRollOnTableButton(table);
   }
   content.push(document.createTextNode(before));
   content.push(document.createTextNode(tableName));
@@ -351,29 +344,41 @@ function parseDie(expression) {
   }
   return content;
 }
-},{"./table":"table.js","./utils":"utils.js","./journal":"journal.js","./roll":"roll.js"}],"main.js":[function(require,module,exports) {
+function createJournalLine(content) {
+  var journal = document.getElementById('journal');
+  var newLine = document.createElement('div');
+  for (var i = 0; i < content.length; i += 1) {
+    newLine.appendChild(content[i]);
+  }
+  journal.appendChild(newLine);
+}
+function createRollOnTableButton(table) {
+  var button = document.createElement('button');
+  button.innerHTML = '<button style="display: inline-block">ROLL</button>';
+  button.onclick = function btnFunction() {
+    createJournalLine(parseExpression((0, _roll.rollOnTable)(table)));
+  };
+  return button;
+}
+function clearJournal() {
+  var journal = document.getElementById('journal');
+  journal.innerHTML = '';
+}
+},{"./table":"table.js","./utils":"utils.js","./roll":"roll.js"}],"main.js":[function(require,module,exports) {
 "use strict";
 
-var _parser = require("./parser");
 var _journal = require("./journal");
 var button = document.getElementById('button');
 var btnClearJournal = document.getElementById('clearJournal');
 button.onclick = function () {
-  // TEST_parseExpression();
-  // TEST_parseExpressionWithTable()
-  // TEST_createButton();
-
-  // var content = parseExpression("Simple expression with no dice or tables");
-  // var content = parseDie("roll [1d6] times");
-  // const content = parseDie('roll on {Trap} and then do something else');
-  var content = (0, _parser.parseExpression)('roll [1d6] times on table {Trap} and then do something else');
+  var content = (0, _journal.parseExpression)('roll [1d6] times on table {Trap} and then do something else');
   (0, _journal.createJournalLine)(content);
 };
 btnClearJournal.onclick = function () {
   console.log('clear journal clicked');
   (0, _journal.clearJournal)();
 };
-},{"./parser":"parser.js","./journal":"journal.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./journal":"journal.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -398,7 +403,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50621" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53106" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
