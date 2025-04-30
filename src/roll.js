@@ -1,4 +1,4 @@
-function rollDie(expression) {
+export function rollDie(expression) {
   // expression = "1d6"
   // expression = "2d10"
   // expression = "1d6+1"
@@ -35,7 +35,7 @@ function rollDie(expression) {
  *   - {string} number: A single number or a range (e.g., "1" or "1-3").
  *   - {string} element: The result corresponding to the number or range.
  */
-function rollOnTable(table) {
+export function rollOnTable(table) {
   let result = '';
   const randomNumber = rollDie(table.dice);
   for (let i = 0; i < table.entries.length; i += 1) {
@@ -54,5 +54,3 @@ function rollOnTable(table) {
   const fullResult = `Roll on ${table.name}: ${result} (${randomNumber})`;
   return fullResult;
 }
-
-module.exports = rollDie, rollOnTable
