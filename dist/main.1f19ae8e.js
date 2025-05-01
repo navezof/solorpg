@@ -123,8 +123,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.trap = exports.tables = exports.roomType = exports.distance = void 0;
-var distance = exports.distance = {
+exports.getTableWithName = getTableWithName;
+var distance = {
   name: 'Distance',
   dice: '1d6',
   entries: [{
@@ -138,7 +138,7 @@ var distance = exports.distance = {
     element: 'Far'
   }]
 };
-var roomType = exports.roomType = {
+var roomType = {
   name: 'Room Type',
   dice: '1d10',
   entries: [{
@@ -170,7 +170,7 @@ var roomType = exports.roomType = {
     element: 'Boss monster'
   }]
 };
-var trap = exports.trap = {
+var trap = {
   name: 'Trap',
   dice: '1d6',
   entries: [{
@@ -193,7 +193,20 @@ var trap = exports.trap = {
     element: 'Electricity'
   }]
 };
-var tables = exports.tables = [distance, roomType, trap];
+var tables = [distance, roomType, trap];
+function getTableWithName(name) {
+  console.log("GetTableWithName: ", name);
+  var table = tables.find(function (table) {
+    return table.name === name;
+  });
+  if (table) {
+    console.log("Found table: ", table);
+    return table;
+  } else {
+    console.error("Table not found: ", name);
+  }
+  return table;
+}
 },{}],"utils.js":[function(require,module,exports) {
 "use strict";
 
@@ -290,15 +303,14 @@ function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Sym
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function parseTable(expression) {
+  console.log('parseTable', expression);
   var content = [];
   var openIndex = expression.indexOf('{');
   var closeIndex = expression.indexOf('}');
   var before = expression.substring(0, openIndex);
   var tableName = expression.substring(openIndex + 1, closeIndex);
   var after = expression.substring(closeIndex + 1);
-  var table = _table.tables.find(function (t) {
-    return t.name === tableName;
-  });
+  var table = (0, _table.getTableWithName)(tableName);
   var button = null;
   if (!table) {
     console.error("Table ".concat(tableName, " not found"));
@@ -368,17 +380,25 @@ function clearJournal() {
 "use strict";
 
 var _journal = require("./journal");
-var button = document.getElementById('button');
+var _roll = require("./roll");
+var _table = require("./table");
+var rollOnTrap = document.getElementById('rollOnTrap');
 var btnClearJournal = document.getElementById('clearJournal');
-button.onclick = function () {
-  var content = (0, _journal.parseExpression)('roll [1d6] times on table {Trap} and then do something else');
-  (0, _journal.createJournalLine)(content);
+rollOnTrap.onclick = function () {
+  var trapTable = (0, _table.getTableWithName)("Trap");
+  console.log("TrapTable: " + trapTable);
+  (0, _journal.createJournalLine)((0, _journal.parseExpression)((0, _roll.rollOnTable)(trapTable)));
+};
+rollOnRoomType.onclick = function () {
+  var roomTypeTable = (0, _table.getTableWithName)("Room Type");
+  console.log("RoomTypeTable: " + roomTypeTable);
+  (0, _journal.createJournalLine)((0, _journal.parseExpression)((0, _roll.rollOnTable)(roomTypeTable)));
 };
 btnClearJournal.onclick = function () {
   console.log('clear journal clicked');
   (0, _journal.clearJournal)();
 };
-},{"./journal":"journal.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./journal":"journal.js","./roll":"roll.js","./table":"table.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -403,7 +423,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52573" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53673" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

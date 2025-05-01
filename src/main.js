@@ -1,12 +1,21 @@
 import { createJournalLine, clearJournal, parseExpression } from './journal';
+import { rollOnTable } from './roll';
+import { getTableWithName } from './table';
 
-const button = document.getElementById('button');
+const rollOnTrap = document.getElementById('rollOnTrap');
 const btnClearJournal = document.getElementById('clearJournal');
 
-button.onclick = function () {
-  const content = parseExpression('roll [1d6] times on table {Trap} and then do something else');
-  createJournalLine(content);
+rollOnTrap.onclick = function () {
+  const trapTable = getTableWithName("Trap");
+  console.log("TrapTable: " + trapTable);
+  createJournalLine(parseExpression(rollOnTable(trapTable)));
 };
+
+rollOnRoomType.onclick = function () {
+  const roomTypeTable = getTableWithName("Room Type");
+  console.log("RoomTypeTable: " + roomTypeTable);
+  createJournalLine(parseExpression(rollOnTable(roomTypeTable)));
+}
 
 btnClearJournal.onclick = function () {
   console.log('clear journal clicked');

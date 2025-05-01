@@ -1,8 +1,9 @@
-import { tables } from './table';
+import { getTableWithName, tables } from './table';
 import isIterable from './utils';
 import { rollDie, rollOnTable } from './roll';
 
 function parseTable(expression) {
+  console.log('parseTable', expression);
   const content = [];
 
   const openIndex = expression.indexOf('{');
@@ -12,7 +13,7 @@ function parseTable(expression) {
   const tableName = expression.substring(openIndex + 1, closeIndex);
   const after = expression.substring(closeIndex + 1);
 
-  const table = tables.find((t) => t.name === tableName);
+  const table = getTableWithName(tableName);
   let button = null;
   if (!table) {
     console.error(`Table ${tableName} not found`);

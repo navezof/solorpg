@@ -1,4 +1,4 @@
-export const distance = {
+const distance = {
   name: 'Distance',
   dice: '1d6',
   entries: [
@@ -7,7 +7,7 @@ export const distance = {
     { number: '4-6', element: 'Far' }],
 };
 
-export const roomType = {
+const roomType = {
   name: 'Room Type',
   dice: '1d10',
   entries: [
@@ -23,7 +23,7 @@ export const roomType = {
   ],
 };
 
-export const trap = {
+const trap = {
   name: 'Trap',
   dice: '1d6',
   entries: [
@@ -36,8 +36,20 @@ export const trap = {
   ],
 };
 
-export const tables = [
+const tables = [
   distance,
   roomType,
   trap,
 ];
+
+export function getTableWithName(name) {
+  console.log("GetTableWithName: ", name);
+ const table = tables.find(table => table.name === name);
+ if (table) {
+   console.log("Found table: ", table);
+   return table;
+ } else {
+    console.error("Table not found: ", name);
+ }
+ return table;
+}

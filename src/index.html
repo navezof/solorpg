@@ -1,20 +1,29 @@
 <html lang="en">
-<head>
-  <title>A JavaScript project</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <h1>SOLO TRPG</h1>
-  <div id="app"></div>
-  <div class="container">
-    <button id="button" class="btn">Roll dice</button>
-    <button id="clearJournal" class="btn">clearJournal</button>
-    <div id="journal">
-      <p>Roll on Trap <button style="display: inline-block">TRAP</button> do stuff</p>
+  <head>
+    <title>A JavaScript project</title>
+    <link rel="stylesheet" href="main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <h3>Menu</h3>
+        <nav class="menu">
+          <h4>Table</h4>
+          <button id="rollOnTrap" class="menu-item">Traps</button>
+          <button id="rollOnRoomType" class="menu-item">Room Type</button>
+          <h4>Utils</h4>
+          <button id="clearJournal" class="menu-item">clearJournal</button>
+        </nav>
+      </aside>
+      <main class="content">
+        <h1>Journal</h1>
+        <div id="journal">
+          <p>Roll on Trap <button style="display: inline-block">TRAP</button> do
+            stuff</p>
+        </div>
+      </main>
     </div>
-
-  </div>  
-  <script src="main.js"></script>
-</body>
+    <script src="main.js"></script>
+  </body>
 </html>

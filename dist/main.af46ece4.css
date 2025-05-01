@@ -1,0 +1,71 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    flex: 1 1 0;
+    max-width: 200px;
+    padding: 2rem 1rem;
+    background-color: #2e3047;
+}
+
+.sidebar h3 {
+    color: #707793;
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+}
+
+.sidebar h4 {
+    color: #707793;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    margin-left: 1em;
+}
+
+.sidebar .menu {
+    margin: 0 -1rem;
+}
+
+.sidebar .menu .menu-item {
+    display: block;
+    padding: 0.5em;
+    width: 90%;
+    justify-self: center;
+    color: #2e3047;
+    text-decoration: none;
+    transition: 0.2s linear;
+}
+
+.sidebar .menu .menu-item:hover {
+    color: #3bba9c;
+    border-right: 5px solid #3bba9c;
+}
+
+.content {
+    flex: 1 1 0;
+    padding: 2rem;
+}
+
+.content h1 {
+    color: #3C3F58;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.content p {
+    color: #707793;
+}
+
+
+/*# sourceMappingURL=/main.af46ece4.css.map */
