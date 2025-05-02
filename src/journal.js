@@ -2,43 +2,9 @@ import { getTableWithName, tables } from './table';
 import isIterable from './utils';
 import { rollDie, rollOnTable } from './roll';
 
-function parseTable(expression) {
-  console.log('parseTable', expression);
-  const content = [];
-
-  const openIndex = expression.indexOf('{');
-  const closeIndex = expression.indexOf('}');
-
-  const before = expression.substring(0, openIndex);
-  const tableName = expression.substring(openIndex + 1, closeIndex);
-  const after = expression.substring(closeIndex + 1);
-
-  const table = getTableWithName(tableName);
-  let button = null;
-  if (!table) {
-    console.error(`Table ${tableName} not found`);
-  } else {
-    button = createRollOnTableButton(table);
-  }
-
-  content.push(document.createTextNode(before));
-  content.push(document.createTextNode(tableName));
-  if (button) {
-    content.push(button);
-  }
-  if (isIterable(after)) {
-    content.push(...parseExpression(after));
-  } else {
-    content.push(parseExpression(after));
-  }
-  return content;
-}
-
 export function parseExpression(expression) {
   for (let i = 0; i < expression.length; i += 1) {
-    if (expression[i] === '{') {
-      return parseTable(expression);
-    } if (expression[i] === '[') {
+    if (expression[i] === '[') {
       return parseDie(expression);
     }
   }
@@ -56,7 +22,8 @@ function parseDie(expression) {
   const after = expression.substring(closeIndex + 1);
 
   content.push(document.createTextNode(before));
-  content.push(document.createTextNode(rollDie(diceExpression)));
+  content.push(document.createTextNode(diceExpression));
+  content.push(document.createTextNode(` ( ${rollDie(diceExpression)} ) `));
   if (isIterable(after)) {
     content.push(...parseExpression(after));
   } else {
@@ -81,6 +48,25 @@ export function createRollOnTableButton(table) {
     createJournalLine(parseExpression(rollOnTable(table)));
   };
   return button;
+}
+
+export function createEntryComponent(title, content) {
+  const journal = document.getElementById('journal');
+
+  console.log("createEntryComponent", title, content);
+  const entry = document.createElement('div');
+  entry.className = "journal-item";
+  journal.appendChild(entry);
+
+  const titleElement = document.createElement('p');
+  titleElement.className = "journal-title";
+  titleElement.innerText = title;
+  entry.appendChild(titleElement);
+
+  const journalContentElement = document.createElement('div');
+  journalContentElement.className = "journal-content";
+  journalContentElement.innerText = content[0].textContent;
+  entry.appendChild(journalContentElement);
 }
 
 export function clearJournal() {

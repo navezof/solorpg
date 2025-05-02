@@ -127,85 +127,70 @@ exports.getTableWithName = getTableWithName;
 var distance = {
   name: 'Distance',
   dice: '1d6',
-  entries: [{
-    number: '1',
-    element: 'Close'
-  }, {
-    number: '2-3',
-    element: 'Near at #1d3 meter'
-  }, {
-    number: '4-6',
-    element: 'Far'
-  }]
+  content: ["1;Close", "2-3;Near at #1d3 meter", "4-6;Far"]
 };
 var roomType = {
   name: 'Room Type',
   dice: '1d10',
-  entries: [{
-    number: '1-2',
-    element: 'Empty'
-  }, {
-    number: '3',
-    element: '{Trap}'
-  }, {
-    number: '4',
-    element: 'Minor hazard'
-  }, {
-    number: '5',
-    element: 'Solo monster'
-  }, {
-    number: '6',
-    element: 'NPC'
-  }, {
-    number: '7',
-    element: 'Monster mob'
-  }, {
-    number: '8',
-    element: 'Major hazard'
-  }, {
-    number: '9',
-    element: 'Treasure'
-  }, {
-    number: '10',
-    element: 'Boss monster'
-  }]
+  content: ["1-2;Empty", "3;Trap", "4;Minor Hazard", "5;Solo Monster", "6;NPC", "7;Monster Mob", "8;Major Hazard", "9;Treasure", "10;Boss Monster"]
 };
 var trap = {
   name: 'Trap',
   dice: '1d6',
-  entries: [{
-    number: '1',
-    element: 'Pit'
-  }, {
-    number: '2',
-    element: 'Poison dart'
-  }, {
-    number: '3',
-    element: 'Fireball'
-  }, {
-    number: '4',
-    element: 'Gas'
-  }, {
-    number: '5',
-    element: 'Blade'
-  }, {
-    number: '6',
-    element: 'Electricity'
-  }]
+  content: ["1;Crude;Ensnaring", "2;Ranged;Toxic", "3-4;Sturdy;Mechanical", "5;Ancient;Magical", "6;Large;Deadly"]
 };
-var tables = [distance, roomType, trap];
+var monsterMob = {
+  name: 'Monster Mob',
+  dice: '1d6',
+  content: ["1;Stealthy Outcasts", "2-3;Reckless Minions", "4;Magical Tricksters", "5;Primitive Vermin", "6;Organized Warriors"]
+};
+var minorHazard = {
+  name: 'Minor Hazard',
+  dice: '1d6',
+  content: ["1;Short fall", "2-3;Stuck or locked barrier", "4;Dense rubble", "5;Collapsing walls", "6;Enfeebling magic"]
+};
+var majorHazard = {
+  name: 'Major Hazard',
+  dice: '1d6',
+  content: ["1-2;Long fall", "3;Toxic gas or vapors", "4;Entrapping terrain", "5;Antimagic zone", "6;Drowning hazard"]
+};
+var soloMonster = {
+  name: 'Solo Monster',
+  dice: '1d6',
+  content: ["1;Sneaky Ambusher", "2-3;Mighty Brute", "4-5;Clever Spellcaster", "6;Mutated Pariah"]
+};
+var treasure = {
+  name: 'Treasure',
+  dice: '1d6',
+  content: ["1-2;Hidden", "3-4;Guarded by monster", "5;Protected by a trap}", "6;Protected by a hazard}"]
+};
+var npc = {
+  name: 'NPC',
+  dice: '1d6',
+  content: ["1;Hiding", "2-3;Captive", "4-5;Wounded", "6;Rival crawlers"]
+};
+var bossMonster = {
+  name: 'Boss Monster',
+  dice: '1d6',
+  content: ["1;Physically strongest", "2;Religious leader", "3-5;Guarded by minions", "6;Supreme sorcerer"]
+};
+var luxuryItem = {
+  name: 'Luxury Item',
+  dice: '1d20',
+  content: ["1;Golden;Life-sized humanoid figure", "2;Etched-copper;1d4: 1. tusk, 2. horn, 3. fang, 4. skull", "3;Dragonscaled;Altar, 1d4: 1. Memnon, 2. Ord, 3-4. Madeera", "4;Gilded;Statuette, 1d4: 1. fox, 2. cat, 3. dog, 4. owl", "5;Bone-carved;1d4: 1. chest, 2. table, 3. lockbox, 4. chair", "6;Amber-encased;Icon, 1d4: 1. Chaos, 2. Neutrality, 3-4. Law", "7;Painting of;Bust, 1d4: 1. god, 2. ruler, 3. hero, 4. bard", "8;Silver;Egg, 1d4: 1. dragon, 2. basilisk, 3-4. griffon", "9;Jade;1d4: 1. charm, 2. amulet, 3. locket, 4. signet", "10;Tapestry of;Mask, 1d4: 1. crow, 2. jester, 3. thief, 4. god", "11;White marble;1d4: 1. mirror, 2. vase, 3. pottery, 4. ewer", "12;Ivory;1d4: 1. chalice, 2. plate, 3. cutlery, 4. mug", "13;Crystal;1d4: 1. circlet, 2. ring, 3. chain, 4. torc", "14;Mithral;Bottle, 1d4: 1. wine, 2. grog, 3. mead, 4. ale", "15;Dragonbone;1d4: 1-2. scroll case, 3. ink pot, 4. quill", "16;Holy relic;1d4: 1. shield, 2. helm, 3. bracers 4. greaves", "17;Meteorite;1d4: 1. lute, 2. viol, 3. harp, 4. flute", "18;Masterwork;1d4: 1. urn, 2. coffin, 3. bier, 4. sarcophagus", "19;Silk-wrapped;1d4: 1. crown, 2. scepter, 3. orb, 4. throne", "20;Stained glass;1d4: 1-2. beetle, 3. butterfly, 4. spider"]
+};
+var tables = [distance, roomType, trap, luxuryItem, monsterMob, minorHazard, majorHazard, soloMonster, treasure, npc, bossMonster];
 function getTableWithName(name) {
   console.log("GetTableWithName: ", name);
-  var table = tables.find(function (table) {
-    return table.name === name;
-  });
-  if (table) {
-    console.log("Found table: ", table);
-    return table;
-  } else {
-    console.error("Table not found: ", name);
+  for (var i = 0; i < tables.length; i += 1) {
+    var table = tables[i];
+    if (table.name === name) {
+      console.log("Found table: ", table);
+      return table;
+    }
   }
-  return table;
+  console.error("Table not found: ", name);
+  return null;
 }
 },{}],"utils.js":[function(require,module,exports) {
 "use strict";
@@ -227,7 +212,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.rollDie = rollDie;
+exports.rollOnCSVTable = rollOnCSVTable;
 exports.rollOnTable = rollOnTable;
+var _table = require("./table");
 function rollDie(expression) {
   // expression = "1d6"
   // expression = "2d10"
@@ -257,17 +244,17 @@ function rollDie(expression) {
  * Rolls on a table and returns the result.
  * @param {Object} table - The table to roll on.
  * @param {string} table.dice - The dice expression (e.g., "1d6").
- * @param {Array} table.entries - The entries of the table.
+ * @param {Array} table.content - The entries of the table.
  * @param {string} table.name - The name of the table.
- * Each entry in table.entries should have:
+ * Each entry in table.content should have:
  *   - {string} number: A single number or a range (e.g., "1" or "1-3").
  *   - {string} element: The result corresponding to the number or range.
  */
 function rollOnTable(table) {
   var result = '';
   var randomNumber = rollDie(table.dice);
-  for (var i = 0; i < table.entries.length; i += 1) {
-    var entry = table.entries[i];
+  for (var i = 0; i < table.content.length; i += 1) {
+    var entry = table.content[i];
     if (entry.number.includes('-')) {
       var range = entry.number.split('-');
       var lowEnd = parseInt(range[0], 10);
@@ -282,13 +269,48 @@ function rollOnTable(table) {
   var fullResult = "Roll on ".concat(table.name, ": ").concat(result, " (").concat(randomNumber, ")");
   return fullResult;
 }
-},{}],"journal.js":[function(require,module,exports) {
+function convertCSVArrayToArray(csvArray) {
+  var newArray = [];
+  for (var i = 0; i < csvArray.length; i += 1) {
+    var row = csvArray[i];
+    var columns = row.split(';');
+    newArray.push(columns);
+  }
+  return newArray;
+}
+function rollOnTableWithIndex(table) {
+  var columnIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  var result = '';
+  var randomNumber = rollDie(table.dice);
+  var content = convertCSVArrayToArray(table.content);
+  for (var i = 0; i < table.content.length; i += 1) {
+    var entry = content[i];
+    if (entry[0].includes('-')) {
+      var range = entry[0].split('-');
+      var lowEnd = parseInt(range[0], 10);
+      var highEnd = parseInt(range[1], 10);
+      if (randomNumber >= lowEnd && randomNumber <= highEnd) {
+        result = entry[columnIndex];
+      }
+    } else if (parseInt(entry[0], 10) === randomNumber) {
+      result = entry[columnIndex];
+    }
+  }
+  console.log("Result: ", result);
+  return result;
+}
+function rollOnCSVTable(tableName, columnIndex) {
+  var table = (0, _table.getTableWithName)(tableName);
+  return rollOnTableWithIndex(table, columnIndex);
+}
+},{"./table":"table.js"}],"journal.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.clearJournal = clearJournal;
+exports.createEntryComponent = createEntryComponent;
 exports.createJournalLine = createJournalLine;
 exports.createRollOnTableButton = createRollOnTableButton;
 exports.parseExpression = parseExpression;
@@ -302,38 +324,8 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function parseTable(expression) {
-  console.log('parseTable', expression);
-  var content = [];
-  var openIndex = expression.indexOf('{');
-  var closeIndex = expression.indexOf('}');
-  var before = expression.substring(0, openIndex);
-  var tableName = expression.substring(openIndex + 1, closeIndex);
-  var after = expression.substring(closeIndex + 1);
-  var table = (0, _table.getTableWithName)(tableName);
-  var button = null;
-  if (!table) {
-    console.error("Table ".concat(tableName, " not found"));
-  } else {
-    button = createRollOnTableButton(table);
-  }
-  content.push(document.createTextNode(before));
-  content.push(document.createTextNode(tableName));
-  if (button) {
-    content.push(button);
-  }
-  if ((0, _utils.default)(after)) {
-    content.push.apply(content, _toConsumableArray(parseExpression(after)));
-  } else {
-    content.push(parseExpression(after));
-  }
-  return content;
-}
 function parseExpression(expression) {
   for (var i = 0; i < expression.length; i += 1) {
-    if (expression[i] === '{') {
-      return parseTable(expression);
-    }
     if (expression[i] === '[') {
       return parseDie(expression);
     }
@@ -348,7 +340,8 @@ function parseDie(expression) {
   var diceExpression = expression.substring(openIndex + 1, closeIndex);
   var after = expression.substring(closeIndex + 1);
   content.push(document.createTextNode(before));
-  content.push(document.createTextNode((0, _roll.rollDie)(diceExpression)));
+  content.push(document.createTextNode(diceExpression));
+  content.push(document.createTextNode(" ( ".concat((0, _roll.rollDie)(diceExpression), " ) ")));
   if ((0, _utils.default)(after)) {
     content.push.apply(content, _toConsumableArray(parseExpression(after)));
   } else {
@@ -372,6 +365,21 @@ function createRollOnTableButton(table) {
   };
   return button;
 }
+function createEntryComponent(title, content) {
+  var journal = document.getElementById('journal');
+  console.log("createEntryComponent", title, content);
+  var entry = document.createElement('div');
+  entry.className = "journal-item";
+  journal.appendChild(entry);
+  var titleElement = document.createElement('p');
+  titleElement.className = "journal-title";
+  titleElement.innerText = title;
+  entry.appendChild(titleElement);
+  var journalContentElement = document.createElement('div');
+  journalContentElement.className = "journal-content";
+  journalContentElement.innerText = content[0].textContent;
+  entry.appendChild(journalContentElement);
+}
 function clearJournal() {
   var journal = document.getElementById('journal');
   journal.innerHTML = '';
@@ -381,24 +389,97 @@ function clearJournal() {
 
 var _journal = require("./journal");
 var _roll = require("./roll");
-var _table = require("./table");
-var rollOnTrap = document.getElementById('rollOnTrap');
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+/// UTILITY
 var btnClearJournal = document.getElementById('clearJournal');
-rollOnTrap.onclick = function () {
-  var trapTable = (0, _table.getTableWithName)("Trap");
-  console.log("TrapTable: " + trapTable);
-  (0, _journal.createJournalLine)((0, _journal.parseExpression)((0, _roll.rollOnTable)(trapTable)));
-};
-rollOnRoomType.onclick = function () {
-  var roomTypeTable = (0, _table.getTableWithName)("Room Type");
-  console.log("RoomTypeTable: " + roomTypeTable);
-  (0, _journal.createJournalLine)((0, _journal.parseExpression)((0, _roll.rollOnTable)(roomTypeTable)));
-};
 btnClearJournal.onclick = function () {
   console.log('clear journal clicked');
   (0, _journal.clearJournal)();
 };
-},{"./journal":"journal.js","./roll":"roll.js","./table":"table.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+/// ROOM TYPE
+var roomTypeButton = document.getElementById('rollOnRoomType');
+roomTypeButton.onclick = function () {
+  console.log("rollOnRoomType clicked");
+  var content = [];
+  content.push.apply(content, _toConsumableArray((0, _journal.parseExpression)((0, _roll.rollOnCSVTable)("Room Type"))));
+  (0, _journal.createEntryComponent)("Roll on Room Type", content);
+};
+var rollOnTrapButton = document.getElementById('rollOnTrap');
+rollOnTrapButton.onclick = function () {
+  console.log("rollOnTrap clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Trap", 1)));
+  content.push(document.createTextNode(" and "));
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Trap", 2)));
+  (0, _journal.createEntryComponent)("Roll on Trap", content);
+};
+var rollOnMinorHazardButton = document.getElementById('rollOnMinorHazard');
+rollOnMinorHazardButton.onclick = function () {
+  console.log("rollOnMinorHazard clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Minor Hazard")));
+  (0, _journal.createEntryComponent)("Roll on Minor Hazard", content);
+};
+var rollOnSoloMonsterButton = document.getElementById('rollOnSoloMonster');
+rollOnSoloMonsterButton.onclick = function () {
+  console.log("rollOnSoloMonster clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Solo Monster")));
+  (0, _journal.createEntryComponent)("Roll on Solo Monster", content);
+};
+var rollOnNPCButton = document.getElementById('rollOnNPC');
+rollOnNPCButton.onclick = function () {
+  console.log("rollOnNPC clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("NPC")));
+  (0, _journal.createEntryComponent)("Roll on NPC", content);
+};
+var rollOnMonsterMobButton = document.getElementById('rollOnMonsterMob');
+rollOnMonsterMobButton.onclick = function () {
+  console.log("rollOnMonsterMob clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Monster Mob")));
+  (0, _journal.createEntryComponent)("Roll on Monster Mob", content);
+};
+var rollOnMajorHazardButton = document.getElementById('rollOnMajorHazard');
+rollOnMajorHazardButton.onclick = function () {
+  console.log("rollOnMajorHazard clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Major Hazard")));
+  (0, _journal.createEntryComponent)("Roll on Major Hazard", content);
+};
+var rollOnTreasureButton = document.getElementById('rollOnTreasure');
+rollOnTreasureButton.onclick = function () {
+  console.log("rollOnTreasure clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Treasure")));
+  (0, _journal.createEntryComponent)("Roll on Treasure", content);
+};
+var rollOnBossMonsterButton = document.getElementById('rollOnBossMonster');
+rollOnBossMonsterButton.onclick = function () {
+  console.log("rollOnBossMonster clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Boss Monster")));
+  (0, _journal.createEntryComponent)("Roll on Boss Monster", content);
+};
+
+/// LUXURY ITEM
+var rollOnLuxuryItemButton = document.getElementById('rollOnLuxuryItem');
+rollOnLuxuryItemButton.onclick = function () {
+  console.log("rollOnLuxuryItem clicked");
+  var content = [];
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Luxury Item", 1)));
+  content.push(document.createTextNode(" "));
+  content.push(document.createTextNode((0, _roll.rollOnCSVTable)("Luxury Item", 2)));
+  (0, _journal.createEntryComponent)("Roll on Luxury", content);
+};
+},{"./journal":"journal.js","./roll":"roll.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -423,7 +504,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53673" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64884" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
