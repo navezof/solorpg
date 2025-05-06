@@ -67,9 +67,13 @@ function convertCSVArrayToArray(csvArray) {
   return newArray;
 }
 
-function rollOnTableWithIndex(table, columnIndex = 1) {
+function rollOnTableWithIndex(table, columnIndex = 1, diceOverride) {
   let result = '';
-  const randomNumber = rollDie(table.dice);
+  let dice = table.dice;
+  if (diceOverride) {
+    dice = diceOverride;
+  }
+  const randomNumber = rollDie(dice);
   const content = convertCSVArrayToArray(table.content)
   for (let i = 0; i < table.content.length; i += 1) {
     const entry = content[i];
@@ -88,7 +92,7 @@ function rollOnTableWithIndex(table, columnIndex = 1) {
   return result;
 }
 
-export function rollOnCSVTable(tableName, columnIndex) {
+export function rollOnCSVTable(tableName, columnIndex, dice = "") {
   const table = getTableWithName(tableName);
-  return rollOnTableWithIndex(table, columnIndex);
+  return rollOnTableWithIndex(table, columnIndex, dice);
 }

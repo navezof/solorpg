@@ -56,7 +56,7 @@ export function createEntryComponent(title, content) {
   console.log("createEntryComponent", title, content);
   const entry = document.createElement('div');
   entry.className = "journal-item";
-  journal.appendChild(entry);
+  journal.insertBefore(entry, journal.firstChild);
 
   const titleElement = document.createElement('p');
   titleElement.className = "journal-title";
@@ -65,7 +65,11 @@ export function createEntryComponent(title, content) {
 
   const journalContentElement = document.createElement('div');
   journalContentElement.className = "journal-content";
-  journalContentElement.innerText = content[0].textContent;
+  for (let i = 0; i < content.length; i += 1) {
+    const contentElement = document.createElement('p');
+    contentElement.innerText = content[i].textContent;
+    journalContentElement.appendChild(contentElement);
+  }
   entry.appendChild(journalContentElement);
 }
 
